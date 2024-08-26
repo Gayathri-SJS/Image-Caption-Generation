@@ -1,6 +1,6 @@
 # Image Caption Generation using Attention Mechanisms
 
-This project extends the implementation of the original Show, Attend and Tell model by experimenting with various attention mechanisms and decoder architectures to compare BLEU scores.
+This project extends the implementation of the original [Show, Attend and Tell](https://arxiv.org/pdf/1502.03044.pdf) model by experimenting with various attention mechanisms and decoder architectures to compare BLEU scores.
 
 ## Architectural Variants Implemented:
 

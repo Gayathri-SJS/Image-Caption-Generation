@@ -1,92 +1,153 @@
-# Show, Attend and Tell: Neural Image Caption Generation with Visual Attention
+# Image Caption Generation using Attention Mechanisms
 
-## A PyTorch implementation
+This project extends the implementation of the original Show, Attend and Tell model by experimenting with various attention mechanisms and decoder architectures to compare BLEU scores.
 
-For a trained model to load into the decoder, use
+## Architectural Variants Implemented:
 
-- [VGG19](https://www.dropbox.com/s/eybo7wvsfrvfgx3/model_10.pth?dl=0)
-- [ResNet152](https://www.dropbox.com/s/0fptqsw3ym9fx2w/model_resnet152_10.pth?dl=0)
-- [ResNet152 No Teacher Forcing](https://www.dropbox.com/s/wq0g2oo6eautv2s/model_nt_resnet152_10.pth?dl=0)
-- [VGG19 No Gating Scalar](https://www.dropbox.com/s/li4390nmqihv4rz/model_no_b_vgg19_5.pth?dl=0)
+- Bahdanau Attention (Base Model)
+- Luong’s Attention
+- Adaptive Attention
+- GRU-based Decoder
+- Teacher Forcing
 
-### Some training statistics
+## Prerequisites
 
-BLEU scores for VGG19 (Orange) and ResNet152 (Red) Trained With Teacher Forcing.
+- Python 3.6 or higher
+- Install the required Python packages by running:
 
-| BLEU Score | Graph                        | Top-K Accuracy   | Graph                              |
-|------------|------------------------------|------------------|------------------------------------|
-| BLEU-1     | ![BLEU-1](/assets/bleu1.png) | Training Top-1   | ![Train TOP-1](/assets/top1.png)   |
-| BLEU-2     | ![BLEU-2](/assets/bleu2.png) | Training Top-5   | ![Train TOP-5](/assets/top5.png)   |
-| BLEU-3     | ![BLEU-3](/assets/bleu3.png) | Validation Top-1 | ![Val TOP-1](/assets/val_top1.png) |
-| BLEU-4     | ![BLEU-4](/assets/bleu4.png) | Validation Top-5 | ![Val TOP-5](/assets/val_top5.png) |
+```bash
+pip install -r requirements.txt
+```
 
-## To Train
+## Dataset
 
-This was written in python3 so may not work for python2. Download the COCO dataset training and validation
-images. Put them in `data/coco/imgs/train2014` and `data/coco/imgs/val2014` respectively. Put the COCO
-dataset split JSON file from [Deep Visual-Semantic Alignments](https://cs.stanford.edu/people/karpathy/deepimagesent/)
-in `data/coco/`. It should be named `dataset.json`.
+The dataset used is the COCO dataset. Download the training and validation images and organize them in the following directories:
 
-Run the preprocessing to create the needed JSON files:
+```bash
+data/coco/imgs/train2014/
+data/coco/imgs/val2014/
+```
+
+Download the COCO dataset split JSON file (from Deep Visual-Semantic Alignments) and place it in:
+
+```bash
+data/coco/
+```
+The file should be named dataset.json.
+
+## Preprocessing
+
+Before training, you need to preprocess the dataset to generate the necessary JSON files. Run:
 
 ```bash
 python generate_json_data.py
 ```
 
-Start the training by running:
+## Training
+
+### Bahdanau Attention (Base Model)
+
+To train the model using Bahdanau Attention (the base model), follow these steps:
+
+1. Rename BahdanauAttention.py to Attention.py:
+
+```bash
+mv BahdanauAttention.py Attention.py
+```
+
+2. Start training by running:
 
 ```bash
 python train.py
 ```
 
-The models will be saved in `model/` and the training statistics will be saved in `runs/`. To see the
-training statistics, use:
+The models will be saved in the model/ directory, and training statistics will be saved in runs/.
+
+### Luong’s Attention
+
+To train the model using Luong’s Attention, follow these steps:
+
+1. Rename LuongsAttention.py to Attention.py:
+
+```bash
+mv LuongsAttention.py Attention.py
+```
+
+2. Rename decoderLuongs.py to decoder.py:
+
+```bash
+mv decoderLuongs.py decoder.py
+```
+
+3. Start training by running:
+
+```bash
+python train.py
+```
+
+### Adaptive Attention
+
+To train the model using Adaptive Attention, follow these steps:
+
+1. Rename AdaptiveAttention.py to Attention.py:
+
+```bash
+mv AdaptiveAttention.py Attention.py
+```
+
+2. Start training by running:
+
+```bash
+python train.py
+```
+
+### GRU-Based Decoder
+
+To train the model using a GRU-based decoder, ensure the GRU implementation is included in the decoder.py file (already set up in the provided files). Then, start training:
+
+
+```bash
+python train.py
+```
+
+### Teacher Forcing
+
+Teacher Forcing is implemented as part of the training procedure. To use Teacher Forcing, set the appropriate flag or parameter within train.py.
+
+
+## Monitoring Training
+
+You can monitor the training process using TensorBoard. 
+Run:
 
 ```bash
 tensorboard --logdir runs
 ```
 
-## To Generate Captions
+## Generating Captions
+
+To generate captions using the trained model:
 
 ```bash
-python generate_caption.py --img-path <PATH_TO_IMG> --model <PATH_TO_MODEL_PARAMETERS>
+python generate_caption.py --img-path <PATH_TO_IMG> --model <PATH_TO_MODEL>
 ```
 
-## Todo
+Replace <PATH_TO_IMG> with the path to the image file and <PATH_TO_MODEL> with the path to the trained model file.
 
-- [x] Create image encoder class
-- [x] Create decoder class
-- [x] Create dataset loader
-- [x] Write main function for training and validation
-- [x] Implement attention model
-- [x] Implement decoder feed forward function
-- [x] Write training function
-- [x] Write validation function
-- [x] Add BLEU evaluation
-- [ ] Update code to use GPU only when available, otherwise use CPU
-- [x] Add performance statistics
-- [x] Allow encoder to use resnet-152 and densenet-161
+## BLEU scores comparison
 
-## Captioned Examples
+<img width="400" alt="image" src="https://github.com/user-attachments/assets/630c16d8-1dca-4302-8c49-eaeb860ce3b8"> <img width="400" alt="image" src="https://github.com/user-attachments/assets/c9c60d04-e4dc-47a7-a3a8-bc1eb25bc034">
 
-### Correctly Captioned Images
+<img width="400" alt="image" src="https://github.com/user-attachments/assets/53d23d9b-e4f5-4134-8536-b2034cb0eafb"> <img width="400" alt="image" src="https://github.com/user-attachments/assets/b012853b-16ab-4e40-bb53-a8c8b951bf23">
 
-![Correctly Captioned Image 1](/assets/tennis.png)
+<img width="555" alt="image" src="https://github.com/user-attachments/assets/83c1aae2-5df4-4aec-9c69-4cb7b8f6bdf1">
 
-![Correctly Captioned Image 2](/assets/right_cap.png)
 
-### Incorrectly Captioned Images
 
-![Incorrectly Captioned Image 1](/assets/bad_cap.png)
+## Conclusion
 
-![Incorrectly Captioned Image 2](/assets/wrong_cap.png)
+This project extends the Show, Attend and Tell implementation by comparing different attention mechanisms and decoder architectures. Rename the appropriate files and follow the commands to execute different implementations.
 
-## References
+## Reference
 
 [Show, Attend and Tell](https://arxiv.org/pdf/1502.03044.pdf)
-
-[Original Theano Implementation](https://github.com/kelvinxu/arctic-captions)
-
-[Neural Machine Translation By Jointly Learning to Align And Translate](https://arxiv.org/pdf/1409.0473.pdf)
-
-[Karpathy's Data splits](https://cs.stanford.edu/people/karpathy/deepimagesent/)
